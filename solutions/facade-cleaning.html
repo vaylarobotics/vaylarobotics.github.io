@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vayla Robotics — Facade Cleaning Solution</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #07090e;
+      --surface: #0c1018;
+      --border:  rgba(255,255,255,0.07);
+      --accent:  #e03030;
+      --accent2: #ff6b35;
+      --text:    #e8ecf0;
+      --muted:   #68737f;
+      --glow:    rgba(224,48,48,0.2);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 6vw;
+      background: rgba(7,9,14,0.8);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+      transition: padding .35s ease;
+    }
+    nav.scrolled { padding: .75rem 6vw; }
+    .logo {
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.25rem;
+      letter-spacing: -.02em; color: var(--text); text-decoration: none;
+    }
+    .logo span { color: var(--accent); }
+    nav ul { list-style: none; display: flex; gap: 2.5rem; }
+    nav ul a {
+      color: var(--muted); font-size: .85rem; font-weight: 500;
+      text-decoration: none; letter-spacing: .05em; text-transform: uppercase;
+      transition: color .25s;
+    }
+    nav ul a:hover { color: var(--text); }
+
+    /* HERO */
+    #hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 0 6vw;
+      position: relative;
+      overflow: hidden;
+      gap: 4vw;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 55px 55px;
+      mask-image: radial-gradient(ellipse 80% 80% at 30% 50%, black 30%, transparent 100%);
+    }
+    .hero-glow {
+      position: absolute; top: 10%; left: -15%;
+      width: 60vw; height: 70vh; border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(224,48,48,.10) 0%, transparent 65%);
+      pointer-events: none;
+      animation: floatGlow 9s ease-in-out infinite;
+    }
+    @keyframes floatGlow {
+      0%,100% { transform: translateY(0) scale(1); }
+      50%      { transform: translateY(-35px) scale(1.06); }
+    }
+
+    .hero-left { position: relative; z-index: 1; padding: 120px 0 80px; }
+
+    .tag {
+      display: inline-flex; align-items: center; gap: .5rem;
+      font-size: .75rem; font-weight: 500; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--accent);
+      border: 1px solid rgba(224,48,48,.3);
+      padding: .3rem .85rem; border-radius: 2px;
+      margin-bottom: 1.8rem;
+      opacity: 0; animation: fadeUp .7s .05s ease forwards;
+    }
+    .tag::before {
+      content: ''; width: 6px; height: 6px;
+      background: var(--accent); border-radius: 50%;
+      animation: pulse 1.8s ease infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.3;transform:scale(1.6)} }
+
+    h1 {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: clamp(2.6rem, 5vw, 5rem);
+      line-height: 1.0; letter-spacing: -.03em;
+      opacity: 0; animation: fadeUp .7s .15s ease forwards;
+    }
+    h1 em { font-style: normal; color: var(--accent); }
+
+    .hero-sub {
+      margin-top: 1.6rem; max-width: 480px;
+      font-size: 1rem; color: var(--muted); font-weight: 300;
+      opacity: 0; animation: fadeUp .7s .25s ease forwards;
+    }
+    .hero-cta {
+      margin-top: 2.5rem; display: flex; gap: 1rem; flex-wrap: wrap;
+      opacity: 0; animation: fadeUp .7s .35s ease forwards;
+    }
+
+    .btn {
+      display: inline-block; text-decoration: none;
+      font-family: 'Syne', sans-serif; font-weight: 600;
+      font-size: .88rem; letter-spacing: .04em;
+      padding: .82rem 2rem; border-radius: 3px;
+      transition: all .25s cubic-bezier(.25,.8,.25,1);
+    }
+    .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 0 28px var(--glow); }
+    .btn-primary:hover { background: #c82828; box-shadow: 0 0 50px rgba(224,48,48,.35); transform: translateY(-2px); }
+    .btn-ghost { border: 1px solid var(--border); color: var(--muted); }
+    .btn-ghost:hover { border-color: rgba(255,255,255,.2); color: var(--text); transform: translateY(-2px); }
+
+    .hero-stats {
+      margin-top: 4rem; display: flex; gap: 3.5rem; flex-wrap: wrap;
+      padding-top: 2.2rem; border-top: 1px solid var(--border);
+      opacity: 0; animation: fadeUp .7s .45s ease forwards;
+    }
+    .stat-num { font-family: 'Syne', sans-serif; font-size: 1.9rem; font-weight: 800; line-height: 1; }
+    .stat-num span { color: var(--accent); }
+    .stat-label { font-size: .75rem; color: var(--muted); margin-top: .3rem; text-transform: uppercase; letter-spacing: .07em; }
+
+    .hero-right {
+      position: relative; z-index: 1;
+      padding: 120px 0 80px;
+      display: flex; align-items: center;
+    }
+    .hero-img-frame {
+      position: relative; width: 100%;
+      opacity: 0; animation: fadeIn .9s .5s ease forwards;
+    }
+    .hero-img-frame img {
+      width: 100%; height: 560px; object-fit: cover;
+      border-radius: 6px; filter: brightness(.8) saturate(1.1);
+      display: block;
+    }
+    .hero-img-badge {
+      position: absolute; bottom: -1.2rem; left: -1.2rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 4px; padding: 1.1rem 1.5rem;
+    }
+    .badge-num { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--accent); line-height: 1; }
+    .badge-label { font-size: .72rem; color: var(--muted); margin-top: .2rem; }
+
+    @keyframes fadeUp { from { opacity:0; transform:translateY(22px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeIn { from { opacity:0; transform:scale(.97); } to { opacity:1; transform:scale(1); } }
+
+    /* SHARED */
+    section { padding: 100px 6vw; }
+    .section-label {
+      font-size: .72rem; font-weight: 600; letter-spacing: .13em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: .9rem;
+    }
+    h2 {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: clamp(1.9rem, 3.5vw, 2.8rem);
+      letter-spacing: -.025em; line-height: 1.1; max-width: 680px;
+    }
+    h2 em { font-style: normal; color: var(--accent); }
+    .section-intro {
+      margin-top: 1rem; max-width: 520px;
+      font-size: 1rem; color: var(--muted); font-weight: 300;
+    }
+
+    /* PROBLEM */
+    #problem { background: var(--surface); }
+    .problem-layout {
+      margin-top: 4rem; display: grid;
+      grid-template-columns: 1.1fr 1fr; gap: 4vw; align-items: center;
+    }
+    .problem-img { border-radius: 6px; overflow: hidden; position: relative; }
+    .problem-img img {
+      width: 100%; height: 480px; object-fit: cover; display: block;
+      filter: brightness(.72) saturate(1.1);
+      transition: transform .7s cubic-bezier(.25,.8,.25,1);
+    }
+    .problem-img:hover img { transform: scale(1.04); }
+    .problem-img-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 40%, rgba(7,9,14,.85) 100%);
+    }
+    .problem-img-caption {
+      position: absolute; bottom: 1.4rem; left: 1.4rem;
+      font-size: .78rem; color: rgba(255,255,255,.5); font-style: italic;
+    }
+    .problem-cards { display: flex; flex-direction: column; gap: 1.1rem; }
+    .problem-card {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 4px;
+      padding: 1.5rem 1.7rem;
+      display: grid; grid-template-columns: 2rem 1fr; gap: 1rem; align-items: start;
+      transition: border-color .3s, transform .3s cubic-bezier(.25,.8,.25,1);
+    }
+    .problem-card:hover { border-color: rgba(224,48,48,.25); transform: translateX(5px); }
+    .p-icon { font-size: 1.3rem; line-height: 1; padding-top: .1rem; }
+    .problem-card h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: .93rem; margin-bottom: .3rem; }
+    .problem-card p { font-size: .87rem; color: var(--muted); line-height: 1.6; }
+
+    /* SOLUTION */
+    #solution { background: var(--bg); }
+    .solution-wrap {
+      margin-top: 4rem; display: grid;
+      grid-template-columns: 1fr 1fr; gap: 5vw; align-items: start;
+    }
+    .solution-features { display: flex; flex-direction: column; }
+    .feat {
+      padding: 1.6rem 0; border-bottom: 1px solid var(--border);
+      display: grid; grid-template-columns: 2.2rem 1fr; gap: 1rem; align-items: start;
+      transition: padding-left .25s cubic-bezier(.25,.8,.25,1);
+    }
+    .feat:first-child { padding-top: 0; }
+    .feat:hover { padding-left: .6rem; }
+    .feat-num { font-family: 'Syne', sans-serif; font-size: .7rem; font-weight: 700; color: var(--accent); padding-top: .3rem; }
+    .feat-body h4 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: .93rem; margin-bottom: .3rem; }
+    .feat-body p { font-size: .87rem; color: var(--muted); }
+
+    .solution-right { position: sticky; top: 120px; display: flex; flex-direction: column; gap: 1.2rem; }
+    .sol-img-main { border-radius: 6px; overflow: hidden; }
+    .sol-img-main img {
+      width: 100%; height: 400px; object-fit: contain; display: block;
+      filter: brightness(.78) saturate(1.15);
+      transition: transform .6s cubic-bezier(.25,.8,.25,1);
+    }
+    .sol-img-main:hover img { transform: scale(1.04); }
+    .sol-img-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    .sol-img-sm { border-radius: 6px; overflow: hidden; }
+    .sol-img-sm img {
+      width: 100%; height: 155px; object-fit: cover; display: block;
+      filter: brightness(.72) saturate(1.1);
+      transition: transform .5s ease, filter .5s ease;
+    }
+    .sol-img-sm:hover img { transform: scale(1.06); filter: brightness(.88) saturate(1.2); }
+
+    /* IMAGE BREAK */
+    .img-break { width: 100%; height: 380px; position: relative; overflow: hidden; }
+    .img-break img {
+      width: 100%; height: 100%; object-fit: cover;
+      filter: brightness(.4) saturate(1.2);
+      transition: transform 14s linear;
+    }
+    .img-break:hover img { transform: scale(1.04); }
+    .img-break-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg, rgba(7,9,14,.75) 0%, transparent 65%);
+      display: flex; align-items: center; padding: 0 8vw;
+    }
+    .img-break-text {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: clamp(1.5rem, 3vw, 2.3rem);
+      line-height: 1.2; max-width: 480px; color: var(--text);
+    }
+    .img-break-text em { color: var(--accent); font-style: normal; }
+
+    /* WHY */
+    #why { background: var(--surface); }
+    .why-grid {
+      margin-top: 4rem;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem;
+    }
+    .why-card {
+      padding: 1.9rem; border: 1px solid var(--border); border-radius: 4px;
+      position: relative; overflow: hidden;
+      transition: border-color .3s, transform .3s cubic-bezier(.25,.8,.25,1);
+    }
+    .why-card::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 100%; height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .4s cubic-bezier(.25,.8,.25,1);
+    }
+    .why-card:hover { border-color: rgba(224,48,48,.2); transform: translateY(-5px); }
+    .why-card:hover::before { transform: scaleX(1); }
+    .why-card h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: .93rem; margin-bottom: .55rem; }
+    .why-card p { font-size: .87rem; color: var(--muted); line-height: 1.65; }
+
+    /* MARKET */
+    #market { background: var(--bg); }
+    .market-layout {
+      margin-top: 4rem; display: grid;
+      grid-template-columns: 1fr 1fr; gap: 5vw; align-items: center;
+    }
+    .market-cards {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2.5rem;
+    }
+    .mcard {
+      padding: 1.5rem; border: 1px solid var(--border); border-radius: 4px;
+      transition: border-color .25s, transform .25s cubic-bezier(.25,.8,.25,1);
+    }
+    .mcard:hover { border-color: rgba(224,48,48,.25); transform: translateY(-3px); }
+    .mcard-num { font-family: 'Syne', sans-serif; font-size: 1.75rem; font-weight: 800; line-height: 1; }
+    .mcard-num span { color: var(--accent); }
+    .mcard-label { font-size: .76rem; color: var(--muted); margin-top: .4rem; line-height: 1.5; }
+    .market-bars { display: flex; flex-direction: column; gap: 1.5rem; }
+    .bar-row {}
+    .bar-meta { display: flex; justify-content: space-between; margin-bottom: .5rem; }
+    .bar-label { font-size: .84rem; font-weight: 500; }
+    .bar-val { font-family: 'Syne', sans-serif; font-size: .84rem; font-weight: 700; color: var(--accent); }
+    .bar-track { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .bar-fill {
+      height: 100%; border-radius: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      width: 0; transition: width 1.3s cubic-bezier(.25,.8,.25,1);
+    }
+    .market-img { border-radius: 6px; overflow: hidden; position: relative; }
+    .market-img img {
+      width: 100%; height: 500px; object-fit: cover; display: block;
+      filter: brightness(.6) saturate(1.2);
+      transition: transform .7s cubic-bezier(.25,.8,.25,1);
+    }
+    .market-img:hover img { transform: scale(1.04); }
+    .market-img::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 55%, rgba(7,9,14,.8) 100%);
+    }
+    .market-img-label {
+      position: absolute; bottom: 1.4rem; left: 1.4rem; z-index: 1;
+      font-size: .76rem; color: rgba(255,255,255,.45); font-style: italic;
+    }
+
+    /* FOUNDERS */
+    #founders { background: var(--surface); }
+    .founders-wrap {
+      margin-top: 4rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 880px;
+    }
+    .founder-card {
+      border: 1px solid var(--border); border-radius: 4px; overflow: hidden;
+      transition: border-color .3s, transform .3s cubic-bezier(.25,.8,.25,1);
+    }
+    .founder-card:hover { border-color: rgba(224,48,48,.3); transform: translateY(-5px); }
+    .founder-img {
+      width: 100%; height: 300px; object-fit: contain; object-position: top center;
+      display: block; filter: brightness(.82) grayscale(.15) saturate(1.1);
+      transition: filter .4s ease;
+    }
+    .founder-card:hover .founder-img { filter: brightness(.92) grayscale(0) saturate(1.2); }
+    .founder-body { padding: 1.7rem; }
+    .founder-name { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; margin-bottom: .2rem; }
+    .founder-role { font-size: .74rem; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: .08em; margin-bottom: .85rem; }
+    .founder-bio { font-size: .87rem; color: var(--muted); line-height: 1.7; }
+    .founder-tags { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: .4rem; }
+    .ftag {
+      font-size: .7rem; padding: .2rem .6rem;
+      border: 1px solid var(--border); border-radius: 2px; color: var(--muted); font-weight: 500;
+    }
+
+    /* CONTACT */
+    #contact {
+      background: var(--bg);
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 5vw; align-items: center; padding: 100px 6vw;
+    }
+    .contact-img { border-radius: 6px; overflow: hidden; }
+    .contact-img img {
+      width: 100%; height: 420px; object-fit: cover; display: block;
+      filter: brightness(.62) saturate(1.15);
+      transition: transform .7s cubic-bezier(.25,.8,.25,1);
+    }
+    .contact-img:hover img { transform: scale(1.04); }
+    .contact-right h2 { max-width: 100%; }
+    .contact-right p { color: var(--muted); font-size: 1rem; margin: 1rem 0 2rem; max-width: 420px; }
+    .contact-links { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.8rem 6vw;
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: .8rem; color: var(--muted);
+    }
+
+    /* REVEAL SYSTEM */
+    .reveal {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity .75s cubic-bezier(.25,.8,.25,1), transform .75s cubic-bezier(.25,.8,.25,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-left {
+      opacity: 0; transform: translateX(-30px);
+      transition: opacity .75s cubic-bezier(.25,.8,.25,1), transform .75s cubic-bezier(.25,.8,.25,1);
+    }
+    .reveal-left.visible { opacity: 1; transform: translateX(0); }
+    .reveal-right {
+      opacity: 0; transform: translateX(30px);
+      transition: opacity .75s cubic-bezier(.25,.8,.25,1), transform .75s cubic-bezier(.25,.8,.25,1);
+    }
+    .reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+    /* staggered children */
+    .stagger > * {
+      opacity: 0; transform: translateY(18px);
+      transition: opacity .55s ease, transform .55s ease;
+    }
+    .stagger.visible > *:nth-child(1) { opacity:1; transform:none; transition-delay:.06s; }
+    .stagger.visible > *:nth-child(2) { opacity:1; transform:none; transition-delay:.16s; }
+    .stagger.visible > *:nth-child(3) { opacity:1; transform:none; transition-delay:.26s; }
+    .stagger.visible > *:nth-child(4) { opacity:1; transform:none; transition-delay:.36s; }
+    .stagger.visible > *:nth-child(5) { opacity:1; transform:none; transition-delay:.46s; }
+    .stagger.visible > *:nth-child(6) { opacity:1; transform:none; transition-delay:.56s; }
+
+    /* MOBILE */
+    @media (max-width: 900px) {
+      #hero { grid-template-columns: 1fr; }
+      .hero-right { display: none; }
+      .problem-layout { grid-template-columns: 1fr; }
+      .solution-wrap { grid-template-columns: 1fr; }
+      .solution-right { position: relative; top: auto; }
+      .why-grid { grid-template-columns: 1fr 1fr; }
+      .market-layout { grid-template-columns: 1fr; }
+      .founders-wrap { grid-template-columns: 1fr; max-width: 440px; }
+      #contact { grid-template-columns: 1fr; }
+      .contact-img { display: none; }
+      nav ul { display: none; }
+    }
+    @media (max-width: 600px) {
+      .why-grid { grid-template-columns: 1fr; }
+      .market-cards { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a class="logo" href="../index.html">Vayla<span>.</span></a>
+  <ul>
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#solution">Solution</a></li>
+    <li><a href="#why">Why Us</a></li>
+    <li><a href="#market">Market</a></li>
+    <li><a href="#founders">Team</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="../index.html" style="color:var(--accent)">← Home</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-glow"></div>
+
+  <div class="hero-left">
+    <div class="tag">India's First AI-Powered Facade Robotics</div>
+    <h1>Maintenance<br/>without<br/><em>humans at height.</em></h1>
+    <p class="hero-sub">Vayla Robotics builds autonomous, modular systems for high-rise facade cleaning, inspection, and maintenance — eliminating dangerous manual labour, permanently.</p>
+    <div class="hero-cta">
+      <a href="#solution" class="btn btn-primary">See How It Works</a>
+      <a href="#contact" class="btn btn-ghost">Get in Touch</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">₹<span>500M</span>+</div>
+        <div class="stat-label">India market (2025)</div>
+      </div>
+      <div>
+        <div class="stat-num">$<span>14.8</span>B</div>
+        <div class="stat-label">Global TAM</div>
+      </div>
+      <div>
+        <div class="stat-num"><span>0</span></div>
+        <div class="stat-label">Workers at height</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-img-frame">
+      <img
+        src="assets/city_bridge.jpeg"
+        alt="Modern high-rise building facade"
+        loading="eager"
+      />
+      <div class="hero-img-badge">
+        <div class="badge-num">6.2%</div>
+        <div class="badge-label">Global CAGR</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="reveal">
+    <div class="section-label">The Problem</div>
+    <h2>High-rise maintenance is broken — in <em>every way.</em></h2>
+    <p class="section-intro">India adds millions of sq ft of high-rise real estate every year. Maintenance hasn't kept up.</p>
+  </div>
+
+  <div class="problem-layout">
+    <div class="problem-img reveal-left">
+      <img
+        src="assets/facade_cleaning.jpeg"
+        alt="Window cleaner on ropes at height"
+        loading="lazy"
+      />
+      <div class="problem-img-overlay"></div>
+      <div class="problem-img-caption">Manual rope-access — the dangerous status quo</div>
+    </div>
+
+    <div class="problem-cards stagger reveal-right">
+      <div class="problem-card">
+        <div class="p-icon">⚠️</div>
+        <div>
+          <h3>Dangerous</h3>
+          <p>Falls remain a leading cause of fatalities in building maintenance. Workers descend manually on ropes, exposed to unpredictable conditions every shift.</p>
+        </div>
+      </div>
+      <div class="problem-card">
+        <div class="p-icon">📉</div>
+        <div>
+          <h3>Inconsistent</h3>
+          <p>Manual cleaning quality varies wildly by worker and day. No feedback loop, no verification — just a crew and a bucket.</p>
+        </div>
+      </div>
+      <div class="problem-card">
+        <div class="p-icon">💸</div>
+        <div>
+          <h3>Expensive Over Time</h3>
+          <p>Repeated setup, labor churn, and downtime compound. Buildings pay more each cycle while quality trends downward.</p>
+        </div>
+      </div>
+      <div class="problem-card">
+        <div class="p-icon">🔒</div>
+        <div>
+          <h3>Infrastructure-Locked</h3>
+          <p>Existing robotic solutions demand permanent BMU rails. Most Indian buildings were never designed for them.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section id="solution">
+  <div class="reveal">
+    <div class="section-label">Our Solution</div>
+    <h2>A full-stack autonomous <em>maintenance platform.</em></h2>
+    <p class="section-intro">One portable, modular system. No building modifications. Works on structures never designed for robots.</p>
+  </div>
+
+  <div class="solution-wrap">
+    <div class="solution-features stagger reveal-left">
+      <div class="feat">
+        <div class="feat-num">01</div>
+        <div class="feat-body">
+          <h4>Non-Permanent Rooftop BMU</h4>
+          <p>Installs on any building using existing anchor points. No structural modification, no permanent rails, no costly retrofit.</p>
+        </div>
+      </div>
+      <div class="feat">
+        <div class="feat-num">02</div>
+        <div class="feat-body">
+          <h4>Motorized Carriage + Dual Robotic Arms</h4>
+          <p>Traverses façades vertically and horizontally. Swappable end-effectors handle cleaning, scrubbing, rinsing, and more.</p>
+        </div>
+      </div>
+      <div class="feat">
+        <div class="feat-num">03</div>
+        <div class="feat-body">
+          <h4>Force-Controlled AI Cleaning</h4>
+          <p>Dynamic force control adapts in real time to surface variation — curved glass, ledges, fins, mixed materials.</p>
+        </div>
+      </div>
+      <div class="feat">
+        <div class="feat-num">04</div>
+        <div class="feat-body">
+          <h4>Vision-Based Quality Assurance</h4>
+          <p>After every pass, onboard AI inspects cleanliness. Missed spots are automatically targeted and re-cleaned. Closed-loop.</p>
+        </div>
+      </div>
+      <div class="feat">
+        <div class="feat-num">05</div>
+        <div class="feat-body">
+          <h4>Modular — Phase 2 Ready</h4>
+          <p>Same hardware, new toolheads: crack detection, sealant, coating, surface prep, light repairs. One platform, expanding revenue.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="solution-right reveal-right">
+      <div class="sol-img-main">
+        <img
+          src="assets/flowchart.jpg"
+          alt="Industrial robotic arm"
+          loading="lazy"
+        />
+      </div>
+      <div class="sol-img-row">
+        <div class="sol-img-sm">
+          <img
+            src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80&fit=crop"
+            alt="Glass building facade detail"
+            loading="lazy"
+          />
+        </div>
+        <div class="sol-img-sm">
+          <img
+            src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=80&fit=crop"
+            alt="AI computer vision"
+            loading="lazy"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IMAGE BREAK -->
+<div class="img-break">
+  <img
+    src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=80&fit=crop"
+    alt="Urban skyline at dusk"
+    loading="lazy"
+  />
+  <div class="img-break-overlay">
+    <p class="img-break-text">
+      India's high-rise boom is accelerating.<br/>
+      Maintenance hasn't kept up.<br/>
+      <em>Vayla bridges that gap.</em>
+    </p>
+  </div>
+</div>
+
+<!-- WHY -->
+<section id="why">
+  <div class="reveal">
+    <div class="section-label">Why Vayla</div>
+    <h2>A <em>defensible moat</em> built into the technology.</h2>
+    <p class="section-intro">Robotics + controls + perception + systems engineering. Not just hardware.</p>
+  </div>
+  <div class="why-grid stagger reveal">
+    <div class="why-card">
+      <h3>RaaS Business Model</h3>
+      <p>No CAPEX for building owners. Subscription pricing per sq ft, per frequency, per service tier. Predictable, high-margin recurring revenue.</p>
+    </div>
+    <div class="why-card">
+      <h3>No Building Modification</h3>
+      <p>Unlike rail-based systems, Vayla requires zero permanent infrastructure. Any building, any age, any geometry — deployed in hours.</p>
+    </div>
+    <div class="why-card">
+      <h3>Closed-Loop Verification</h3>
+      <p>The only system that inspects its own work and corrects it autonomously — a quality guarantee manual labour cannot structurally provide.</p>
+    </div>
+    <div class="why-card">
+      <h3>Multi-Surface Adaptability</h3>
+      <p>Dynamic force control handles curved façades, ledges, fins, mixed materials — where suction and magnetic crawlers completely fail.</p>
+    </div>
+    <div class="why-card">
+      <h3>Platform, Not a Product</h3>
+      <p>Phase 2 expands via swappable toolheads: crack detection, coating, sealant, repairs. One fleet, compounding revenue streams.</p>
+    </div>
+    <div class="why-card">
+      <h3>Strong IP Position</h3>
+      <p>Patent strategy in progress. Portable BMU + force control + vision QA creates layered defensibility that's hard to replicate.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MARKET -->
+<section id="market">
+  <div class="reveal">
+    <div class="section-label">Market Opportunity</div>
+    <h2>A structural shift — <em>India first, world next.</em></h2>
+    <p class="section-intro">Labour is declining. Regulations are tightening. ESG scrutiny is rising. The tailwinds are permanent.</p>
+  </div>
+
+  <div class="market-layout">
+    <div class="market-left">
+      <div class="market-cards stagger reveal">
+        <div class="mcard">
+          <div class="mcard-num">$<span>14.8</span>B</div>
+          <div class="mcard-label">Global Facade Maintenance TAM (2023)</div>
+        </div>
+        <div class="mcard">
+          <div class="mcard-num">$<span>6.7</span>B</div>
+          <div class="mcard-label">SAM — Asia + Middle East</div>
+        </div>
+        <div class="mcard">
+          <div class="mcard-num">$<span>500</span>M</div>
+          <div class="mcard-label">India SOM — Initial target (2025)</div>
+        </div>
+        <div class="mcard">
+          <div class="mcard-num"><span>6.2</span>%</div>
+          <div class="mcard-label">Global CAGR and accelerating</div>
+        </div>
+      </div>
+
+      <div class="market-bars reveal" id="market-bars">
+        <div class="bar-row">
+          <div class="bar-meta"><span class="bar-label">Global TAM</span><span class="bar-val">$14.8B</span></div>
+          <div class="bar-track"><div class="bar-fill" data-width="100"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-meta"><span class="bar-label">Asia + Middle East SAM</span><span class="bar-val">$6.7B</span></div>
+          <div class="bar-track"><div class="bar-fill" data-width="45"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-meta"><span class="bar-label">India SOM</span><span class="bar-val">$500M</span></div>
+          <div class="bar-track"><div class="bar-fill" data-width="10"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="market-img reveal-right">
+      <img
+        src="assets/city_dev.jpeg"
+        alt="Mumbai skyline aerial view"
+        loading="lazy"
+      />
+      <div class="market-img-label">India's urban high-rise boom — the largest untapped opportunity</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDERS -->
+<section id="founders">
+  <div class="reveal">
+    <div class="section-label">The Team</div>
+    <h2>Built by people who <em>think in first principles.</em></h2>
+    <p class="section-intro">Deep robotics background. Long-term vision far beyond cleaning.</p>
+  </div>
+  <div class="founders-wrap stagger reveal">
+    <div class="founder-card">
+      <img
+        class="founder-img"
+        src="assets/surendhra_image.jpeg"
+        alt="Surendranadh Co-Founder"
+        loading="lazy"
+      />
+      <div class="founder-body">
+        <div class="founder-name">Surendranadh</div>
+        <div class="founder-role">Co-Founder</div>
+        <p class="founder-bio">Robot Development, Systems thinking, and Market strategy. Drives the technical vision and architecture of the Vayla platform, with a focus on scalability across building types and geographies.</p>
+        <div class="founder-tags">
+          <span class="ftag">Robot Development</span>
+          <span class="ftag">Systems Architecture</span>
+          <span class="ftag">Market Strategy</span>
+        </div>
+      </div>
+    </div>
+    <div class="founder-card">
+      <img
+        class="founder-img"
+        src="assets/harthik_image.jpeg"
+        alt="Harthik Co-Founder"
+        loading="lazy"
+      />
+      <div class="founder-body">
+        <div class="founder-name">Harthik</div>
+        <div class="founder-role">Co-Founder</div>
+        <p class="founder-bio">Hands-on robot development — mechanical design, controls engineering, and real-world deployment. The builder who turns first-principles thinking into working hardware.</p>
+        <div class="founder-tags">
+          <span class="ftag">Mechanical Engineering</span>
+          <span class="ftag">Controls</span>
+          <span class="ftag">Robot Development</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-img reveal-left">
+    <img
+      src="https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?w=900&q=80&fit=crop"
+      alt="Modern glass building"
+      loading="lazy"
+    />
+  </div>
+  <div class="contact-right reveal-right">
+    <div class="section-label">Get In Touch</div>
+    <h2>Ready to talk?</h2>
+    <p>Whether you're a facility manager, investor, or potential partner — we'd love to hear from you.</p>
+    <div class="contact-links">
+      <a href="mailto:vaylarobotics@gmail.com" class="btn btn-primary">vaylarobotics@gmail.com</a>
+      <a href="https://linkedin.com" target="_blank" class="btn btn-ghost">LinkedIn ↗</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2025 Vayla Robotics. All rights reserved.</span>
+  <span>Hyderabad, India</span>
+</footer>
+
+<script>
+  /* Nav shrink */
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  }, { passive: true });
+
+  /* Universal reveal observer */
+  const allReveal = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .stagger');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  allReveal.forEach(el => io.observe(el));
+
+  /* Market bars — animate width when in view */
+  let barsAnimated = false;
+  const barSection = document.getElementById('market-bars');
+  const barIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting && !barsAnimated) {
+        barsAnimated = true;
+        document.querySelectorAll('.bar-fill').forEach((bar, i) => {
+          setTimeout(() => { bar.style.width = bar.dataset.width + '%'; }, i * 180);
+        });
+      }
+    });
+  }, { threshold: 0.35 });
+  if (barSection) barIO.observe(barSection);
+
+  /* Subtle parallax on hero image */
+  const heroFrame = document.querySelector('.hero-img-frame');
+  if (heroFrame) {
+    window.addEventListener('scroll', () => {
+      heroFrame.style.transform = `translateY(${window.scrollY * 0.1}px)`;
+    }, { passive: true });
+  }
+</script>
+</body>
+</html>
